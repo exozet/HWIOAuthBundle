@@ -31,6 +31,27 @@ class SoundcloudResourceOwner extends GenericOAuth2ResourceOwner
     );
 
     /**
+     * @param array $accessToken
+     * @param array $extraParameters
+     * @return \HWI\Bundle\OAuthBundle\OAuth\Response\UserResponseInterface
+     */
+    public function getUserInformation(array $accessToken, array $extraParameters = array())
+    {
+        if ($this->options['use_bearer_authorization']) {
+            $content = $this->httpRequest($this->normalizeUrl($this->options['infos_url']), null, array('Authorization: Bearer '.$accessToken['access_token']));
+        } else {
+            $content = $this->doGetUserInformationRequest($this->normalizeUrl($this->options['infos_url'], array('oauth_token' => $accessToken['access_token'])));
+        }
+
+        $response = $this->getUserResponse();
+        $response->setResponse($content->getContent());
+        $response->setResourceOwner($this);
+        $response->setOAuthToken(new OAuthToken($accessToken));
+
+        return $response;
+    }
+
+    /**
      * {@inheritDoc}
      */
     protected function configureOptions(OptionsResolverInterface $resolver)

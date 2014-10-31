@@ -57,6 +57,37 @@ class FacebookResourceOwner extends GenericOAuth2ResourceOwner
     }
 
     /**
+     * @param $accessToken
+     * @param array $extraParameters
+     * @return array|\Buzz\Message\MessageInterface|mixed
+     */
+    public function getLongAccessToken($accessToken, array $extraParameters = array())
+    {
+        /**
+        https://graph.facebook.com/oauth/access_token?
+        client_id=APP_ID&
+        client_secret=APP_SECRET&
+        grant_type=fb_exchange_token&
+        fb_exchange_token=EXISTING_ACCESS_TOKEN
+         */
+
+        $parameters = array_merge( array(
+            'fb_exchange_token' => $accessToken,
+            'grant_type'        => 'fb_exchange_token',
+            'client_id'         => $this->options['client_id'],
+            'client_secret'     => $this->options['client_secret'],
+        ), $extraParameters);
+
+        $response = $this->doGetTokenRequest($this->options['access_token_url'], $parameters);
+        $response = $this->getResponseContent($response);
+
+        $this->validateResponseContent($response);
+
+        return $response;
+    }
+
+
+    /**
      * {@inheritDoc}
      */
     public function revokeToken($token)

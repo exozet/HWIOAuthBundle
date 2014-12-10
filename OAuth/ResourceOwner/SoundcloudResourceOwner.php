@@ -63,7 +63,7 @@ class SoundcloudResourceOwner extends GenericOAuth2ResourceOwner
             'authorization_url'        => 'https://soundcloud.com/connect',
             'infos_url'                => 'https://api.soundcloud.com/me.json',
 
-            'use_bearer_authorization' => true,
+            'use_bearer_authorization' => false,
             'scope'                    => 'non-expiring',
         ));
     }
